@@ -1,11 +1,21 @@
 #include <stdio.h>
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 #include "source/sprite.h"
 #include "source/canvas.h"
 #include "source/pixelCanvas.h"
 
+std::pair<float,float> center_of_mass(std::vector<Sprite> s){
+    float xsum = 0.0f, ysum = 0.0f;
+    for(auto spr:s){
+        xsum += spr.x;
+        ysum += spr.y;
+    }
+    // printf("%d, %d",xsum/s.size(), ysum/s.size());
+    return { xsum/s.size() ,ysum/s.size() };
+}
 
 int main(int argc,  char** argv){
     std::string image_ph = "/home/rem/Pictures/misc/yo_monta_.jpg";
@@ -21,12 +31,25 @@ int main(int argc,  char** argv){
     std::string tst_img = "bin/p_1.png";
     Sprite sp(tst_img);
     Sprite s1, s2(tst_img), s3(tst_img), s4(tst_img);
+    
+    std::vector<Sprite> s_list;
+    s_list.push_back(s1);
+    s_list.push_back(s2);
+    s_list.push_back(s3);
+    s_list.push_back(s4);
+
     s1.load(tst_img);
     s1.setPosition(500,500);
     s2.setPosition(100, 100);
     s3.setPosition(200, 200);
     s4.setPosition(300, 300);
-    sp.setPosition(250,250);
+    
+
+
+    std::pair<float,float> com = center_of_mass(s_list);
+    float nnx = com.first;
+    float nny = com.second;
+    sp.setPosition(nnx,nny);
     float theta = 0;
     int xv = 2*cos(theta);
     int yv = 2*sin(theta);
@@ -36,12 +59,19 @@ int main(int argc,  char** argv){
         // 1. Logic: Update object positions
         xv = 2*cos(theta);
         yv = 2*sin(theta);
-        sp.setPosition(100+xv, 100+yv);
-        s1.setPosition(s1.x+xv, s1.y+yv);
-        s2.setPosition(s2.x+xv, s2.y-yv);
-        s3.setPosition(s3.x-xv, s3.y+yv);
+        s1.setPosition(s1.x+(2*xv), s1.y+(2*yv));
+        s2.setPosition(s2.x+(2*xv), s2.y-yv);
+        s3.setPosition(s3.x-xv, s3.y+(2*yv));
         s4.setPosition(s4.x-xv, s4.y-yv);
-        
+        s_list.clear();
+        s_list.push_back(s1);
+        s_list.push_back(s2);
+        s_list.push_back(s3);
+        s_list.push_back(s4);
+        std::pair<float,float> com = center_of_mass(s_list);
+        nnx= com.first;
+        nny = com.second; 
+        sp.setPosition(nnx,nny);
         // 2. Render: Draw objects to the back buffer
         sp.draw();
 
