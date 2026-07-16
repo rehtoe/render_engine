@@ -1,14 +1,14 @@
 #include "sprite.h"
 
 GLuint LoadTextureFromPath(const std::string& path) {
-    // Load image using OpenCV (Supports jpg, png, jpeg, etc.)
+    // image loading w/ OpenCV ( jpg, png, jpeg, etc.)
     cv::Mat img = cv::imread(path, cv::IMREAD_UNCHANGED);
     if (img.empty()) {
         std::cerr << "ERR: Could not load image at " << path << std::endl;
         return 0;
     }
 
-    // Flip for OpenGL (Bottom-Left vs Top-Left)
+    // flip for OpenGL (Bottom-Left vs Top-Left)
     cv::flip(img, img, 0);
 
     GLenum format;
@@ -24,7 +24,7 @@ GLuint LoadTextureFromPath(const std::string& path) {
     glGenTextures(1, &texID);
     glBindTexture(GL_TEXTURE_2D, texID);
 
-    // Crucial: Handle images with widths not divisible by 4
+    // use images with widths that arent a multiple of 4
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -49,7 +49,7 @@ GLuint LoadTextureFromPath2(const std::string& path) {
 GLuint LoadTextureFromMat(const cv::Mat& inputImg) {
     if (inputImg.empty()) { return 0; }
 
-    // Clone the matrix so we don't modify the user's original data
+    // copy data to keep original unchanged
     cv::Mat img = inputImg.clone();
 
     // OpenGL expects (0,0) at bottom-left; OpenCV uses top-left.
@@ -86,13 +86,13 @@ Sprite::Sprite(const std::string& path, float x, float y) : x(x), y(y) {
 }
 
 void Sprite::load(const std::string& path) {
-    // Use OpenCV to get dimensions before/during loading
+    // (OpenCV) get dimensions before/during loading
     cv::Mat temp = cv::imread(path, cv::IMREAD_UNCHANGED);
     if (!temp.empty()) {
         this->width = (float)temp.cols;
         this->height = (float)temp.rows;
     }
-    this->textureID = LoadTextureFromPath(path);
+    this->textureID = LoadTextureFromPath2(path);
 }
 
 void Sprite::setPosition(float nx, float ny){
@@ -111,7 +111,7 @@ void Sprite::draw() const {
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    // Simple Alpha Blending
+    // simple alpha blending
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

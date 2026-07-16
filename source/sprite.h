@@ -7,7 +7,7 @@
 #include <vector>
 #include <iostream>
 
-// Helper to bridge OpenCV and OpenGL
+// helpers, bridge OpenCV and OpenGL
 GLuint LoadTextureFromPath(const std::string& path);
 GLuint LoadTextureFromPath2(const std::string& path);
 GLuint LoadTextureFromMat(const cv::Mat& inputImg);

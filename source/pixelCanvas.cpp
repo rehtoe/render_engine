@@ -1,13 +1,13 @@
 #include "pixelCanvas.h"
 
 PixelCanvas::PixelCanvas(int w, int h, int cvType) : width(w), height(h) {
-    // Initialize with zeros (black)
+    // init with zeros (black)
     material = cv::Mat::zeros(height, width, cvType);
 }
 
 void PixelCanvas::setHSV(int x, int y, int h, int s, int v) {
     if (x >= 0 && x < width && y >= 0 && y < height) {
-        // OpenCV HSV expects: H(0-180), S(0-255), V(0-255)
+        // (OpenCV) HSV expects: H(0-180), S(0-255), V(0-255)
         material.at<cv::Vec3b>(y, x) = cv::Vec3b(h, s, v);
     }
 }
@@ -27,7 +27,7 @@ void PixelCanvas::drawProcedural(int anchorX, int anchorY, int maxHeight) {
 }
 
 cv::Mat& PixelCanvas::getMat() {
-    // Convert current state from HSV to BGR for OpenGL/Display
+    // convert from HSV to BGR for OpenGL/Display
     cv::cvtColor(material, material, cv::COLOR_HSV2BGR);
     return material;
 }

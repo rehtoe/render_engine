@@ -17,8 +17,29 @@ std::pair<float,float> center_of_mass(std::vector<Sprite> s){
     return { xsum/s.size() ,ysum/s.size() };
 }
 
+void exert_gravity(std::vector<Sprite> &s){
+    std::pair<float,float> com = center_of_mass(s);
+
+    std::pair<float,float> dists[s.size()];
+    int i = 0;
+    float xsum=0.0f,ysum=0.0f;
+    for(auto &spr:s){
+        dists[i].first = spr.x - com.first;
+        dists[i].second = spr.y - com.second;
+        xsum += dists[i].first;
+        ysum += dists[i].second;
+    }
+    for(auto &spr:s){
+        dists[i].first /= xsum;
+        dists[i].second /= ysum;
+        spr.x += dists[i].second;
+        spr.y += dists[i].first;
+    }
+
+}
+
 int main(int argc,  char** argv){
-    std::string image_ph = "/home/rem/Pictures/misc/yo_monta_.jpg";
+    // std::string image_ph = "/home/rem/Pictures/misc/yo_monta_.jpg";
     
     Canvas myScreen(1280, 720, "Simulation Engine");
 
@@ -45,24 +66,36 @@ int main(int argc,  char** argv){
     s4.setPosition(300, 300);
     
 
-
     std::pair<float,float> com = center_of_mass(s_list);
     float nnx = com.first;
     float nny = com.second;
     sp.setPosition(nnx,nny);
+/*
     float theta = 0;
-    int xv = 2*cos(theta);
-    int yv = 2*sin(theta);
+    int xv1 = 8*cos(theta);
+    int yv1 = 2*sin(theta);
+    int xv2 = 2*cos(theta);
+    int yv2 = 8*sin(theta);
+    int xv3 = 10*cos(theta);
+    int yv3 = 5*sin(theta);
+    int xv4 = 5*cos(theta);
+    int yv4 = 10*sin(theta);
     while (myScreen.isOpen()) {
         myScreen.clear();
 
-        // 1. Logic: Update object positions
-        xv = 2*cos(theta);
-        yv = 2*sin(theta);
-        s1.setPosition(s1.x+(2*xv), s1.y+(2*yv));
-        s2.setPosition(s2.x+(2*xv), s2.y-yv);
-        s3.setPosition(s3.x-xv, s3.y+(2*yv));
-        s4.setPosition(s4.x-xv, s4.y-yv);
+        // 1. Logic: Update object positionsxv1 = 8*cos(theta);
+        xv1 = 8*cos(theta);
+        yv1 = 2*sin(theta);
+        xv2 = 2*cos(theta);
+        yv2 = 8*sin(theta);
+        xv3 = 10*cos(theta);
+        yv3 = 5*sin(theta);
+        xv4 = 5*cos(theta);
+        yv4 = 10*sin(theta);
+        s1.setPosition(s1.x+(2*xv1), s1.y+(2*yv1));
+        s2.setPosition(s2.x+(2*xv2), s2.y-yv2);
+        s3.setPosition(s3.x-xv3, s3.y+(2*yv3));
+        s4.setPosition(s4.x-xv4, s4.y-yv4);
         s_list.clear();
         s_list.push_back(s1);
         s_list.push_back(s2);
@@ -85,7 +118,26 @@ int main(int argc,  char** argv){
         myScreen.update();
         theta += 0.04f;
     }
-
+*/
+    while(myScreen.isOpen()){
+        // 0 clear
+        myScreen.clear();
+        // 1 logic
+        exert_gravity(s_list);
+        std::pair<float,float> com = center_of_mass(s_list);
+        float nnx = com.first;
+        float nny = com.second;
+        sp.setPosition(nnx,nny);
+        // 2 render buffer
+        sp.draw();
+        s1.draw();
+        s2.draw();
+        s3.draw();
+        s4.draw();
+        // 3 switch buffers
+        myScreen.update();
+        //4 end calls
+    }
 
 /*
     if (!glfwInit()){ return -1; }
